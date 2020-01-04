@@ -90,6 +90,7 @@
    // 유저가 정의한 컴포넌트를 react요소로 전달 -> {name: "Sara"}로 Welcome 컴포넌트 호출 
    const element = <Welcome name="Sara" />;
    
+   // element를 root로 랜더링할 것
    ReactDOM.render(
    	element,
    	document.getElementById('root')
@@ -129,9 +130,193 @@
      }
      ```
 
+5. 컴포넌트 추출
+   : 컴포넌트를 더 작은 컴포넌트로 쪼개는 것
+
+   ```react
+   function Comment(props) {
+       return (
+       	<div calssName="Comment">
+           	<div className="UserInfo">
+               	<img className="Avatar"
+                       src={props.author.avatarUrl}
+                       alt={props.author.name}
+                    />
+                   <div className="UserInfo-name">
+                   	{props.author.name}
+                   </div>
+               </div>
+               <div className="Comment-text">
+               	{props.text}
+               </div>
+               <div className="Comment-date">
+               	{formatDate(props.date)}
+               </div>
+           </div>
+       );
+   }
+   
+   const comment = {
+     date: new Date(),
+     text:
+       'I hope you enjoy learning React!',
+     author: {
+       name: 'Hello Kitty',
+       avatarUrl:
+         'http://placekitten.com/g/64/64',
+     },
+   };
+   
+   ReactDOM.render(
+     <Comment
+       date={comment.date}
+       text={comment.text}
+       author={comment.author}
+     />,
+     document.getElementById('root')
+   );
+   
+   ```
+
+   - Avatar 추출하기
+   
+     ```react
+     function Avatar(props) {
+         return (
+         	<img className="avatar"
+                 src={props.user.avatarUrl}
+                 alt={props.user.name}
+              />
+         );
+     }
+     ```
+   
+     -> Comment()를 간소화시킬 수 있음
+   
+     ```react
+     function Comment(props) {
+       return (
+         <div className="Comment">
+           <div className="UserInfo">
+             <Avatar user={props.author} />
+             <div className="UserInfo-name">
+               {props.author.name}
+             </div>
+           </div>
+           <div className="Comment-text">
+             {props.text}
+           </div>
+           <div className="Comment-date">
+             {formatDate(props.date)}
+           </div>
+         </div>
+       );
+     }
+     ```
+   
+   - UserInfo 컴포넌트 추출
+   
+     ```react
+     function UserInfo(props) {
+         return (
+         	<div className="UserInfo">
+                 {/* UserInfo 안에 Avatar포함 */}
+             	<Avatar user={props.user} />
+                 <div className="UserInfo-name">
+                 	{props.user.name}
+                 </div>
+             </div>
+         );
+     }
+     ```
+   
+     -> Comment() 단순화
+   
+     ```react
+     function Comment(props) {
+       return (
+         <div className="Comment">
+           <UserInfo user={props.author} />
+           <div className="Comment-text">
+             {props.text}
+           </div>
+           <div className="Comment-date">
+             {formatDate(props.date)}
+           </div>
+         </div>
+       );
+     }
+     ```
+   
+   - 전체 코드
+   
+     ```react
+     function formatDate(date) {
+       return date.toLocaleDateString();
+     }
+     
+     function Avatar(props) {
+       return (
+         <img
+           className="Avatar"
+           src={props.user.avatarUrl}
+           alt={props.user.name}
+         />
+       );
+     }
+     
+     function UserInfo(props) {
+       return (
+         <div className="UserInfo">
+           <Avatar user={props.user} />
+           <div className="UserInfo-name">
+             {props.user.name}
+           </div>
+         </div>
+       );
+     }
+     
+     function Comment(props) {
+       return (
+         <div className="Comment">
+           <UserInfo user={props.author} />
+           <div className="Comment-text">
+             {props.text}
+           </div>
+           <div className="Comment-date">
+             {formatDate(props.date)}
+           </div>
+         </div>
+       );
+     }
+     
+     const comment = {
+       date: new Date(),
+       text:
+         'I hope you enjoy learning React!',
+       author: {
+         name: 'Hello Kitty',
+         avatarUrl:
+           'http://placekitten.com/g/64/64',
+       },
+     };
+     ReactDOM.render(
+       <Comment
+         date={comment.date}
+         text={comment.text}
+         author={comment.author}
+       />,
+       document.getElementById('root')
+     );
+     
+     ```
+   
      
 
+## 3. Props
 
+- Props는 읽기 전용임
+  
 
 
 
