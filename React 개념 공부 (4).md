@@ -430,11 +430,41 @@ class Reservation extends React.Component {
 ## 11. State 끌어올리기
 
 ```react
+// prop으로 celsius 온도를 받고, 물이 끓는지 아닌지 표시
 function BiolingVerdict(props) {
     if (props.celsius >= 100) {
         return <p>끓는다!</p>
     }
     return <p>아직 안끓어요</p>
+}
+
+// calculator 컴포넌트 -> 온도를 입력받을 input을 랜더링하고 그 값을 this.state.temperature 로 넣는다.
+// 현재 입력 값으로 BoilingVerdict을 랜더링함
+class Caculator extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.state = {temperature: ''};
+    }
+    
+    handleChange(e) {
+        this.setState({temperature: e.target.value});
+    }
+    
+    render() {
+        const temperature = this.state.temperature;
+        return (
+        <fieldset>
+        	<legend>Enter Temperature in Celsius:</legend>
+            <input
+                value={temperature}
+                onChange={this.handleChange} />
+                
+            <BoilingVerdict
+                celsius={parseFloat(temperature)} />
+        </fieldset>
+        );
+    }
 }
 ```
 
