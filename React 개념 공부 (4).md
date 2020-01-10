@@ -232,9 +232,211 @@ function Numbers(props) {
 
 
 
+## 10. 폼
+
+### 10-1 Controlled Components (제어되는 컴포넌트)
+
+- React의 state는 컴포넌트의 state속성에 존재하며, setState()로만 업데이트 할 수 있다.
+- React state를 **신뢰 가능한 단일 소스** 로 만들어 두 요소를 결합할 수 있다.
+  그 다음 렌더링되는 React 컴포넌트는 이후에 폼에서 발생하는 유저 입력을 제어함.
+  이 방식으로 React에 의해 제어되는 Input폼 요소 = **제어되는 컴포넌트**
+
+- ex) 이름을 입력할 때 이름을 log로 남기고싶다면, 해당 폼을 제어되는 컴포넌트로 작성할 수 있음
+
+```react
+class NameForm extends React.Component {
+    constructor(props) {
+        super(props) {
+            this.state = {value: ''};
+            
+            this.handleChange = this.handleChange.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        
+        // 변화가 일어나면 state를 입력받은 event의 value로 바꾼다
+        // value 속성은 폼 요소에 설정되므로 표시값은 항상 this.state.value임 -> 신뢰 가능한 소스
+        // handleChane : state변경과 연관되는 핸들러 함수 -> 이 함수를 통해 사용자 입력을 검사하거나 수정할 수 있음.
+        handleChange(event) {
+            this.setState({value: event.target.value});
+        }
+        
+        handleSubmit(event) {
+            alert('A name was submitted: ' + this.state.value);
+        	event.preventDefault();
+        }
+        
+        render() {
+            return (
+            	<form onSubmit={this.handleSubmit}>
+                	<label>
+                    	name:
+                        <input type="text" value={this.state.value} onChange={this.handleChange} />
+                    </label>
+                    <input type="submit" value="submit" />
+                </form>
+            );
+        }
+    }
+```
+
+### 10-2 textarea 태그
+
+- React에서 <textarea>는 value속성을 사용한다.
+
+```react
+class EssayForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      // this.state.value에 값을 줌으로써 text를 나타낼 수 있다. 
+      value: 'Please write an essay about your favorite DOM element.'
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+
+  handleSubmit(event) {
+    alert('An essay was submitted: ' + this.state.value);
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Essay:
+          <textarea value={this.state.value} onChange={this.handleChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+}
+```
+
+### 10-3 select 태그
+
+- React 에서는 selected 속성을 사용하는 대신 루트 select 태그에 value 속성을 사용함. -> 한 곳에서 업데이트만 하면 돼서 제어되는 컴포넌트에서 사용하기 더 편리함
+
+```react
+class FlavorForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {value: 'coconut'};
+        
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    
+    handleChange(event) {
+        this.setState({value: event.target.value});
+    }
+    
+    handleSubmit(event) {
+        alert('Yours favorite flavor is : ' + this.state.value);
+        event.preventDefault();
+    }
+    
+    render() {
+        return (
+        <from onSubmit={this.handleSubmit}>
+        	<label>
+                Pick your favorite flavor:
+                <select value={this.state.value} onChange={this.handleChange}>
+                	<option value="grape">Grape</option>
+                    <option value="banana">banana</option>
+                    <option value="strawberry">strawberry</option>
+                    <option value="lime">lime</option>
+                    <option value="coconut">coconut</option>
+                </select>
+            </label>    
+            <input type="submit" value="Submit" />
+        </form>
+        );
+    }
+}
+```
+
+- 정리 : <input type="text">, <textarea>, <select> 를 비슷하게 동작하도록 할 수 있다. 모두 제어되는 컴포넌트를 구현할 때 value속성을 사용할 수 있다.
+
+- `select`태그에서 여러개의 옵션을 사용하고 싶다면, value 속성에 배열을 전달할 수 있다.
+  `<select multiple={true} value={['B', 'C']}>`
+
+### 10-4 여러 Input 제어하기
+
+**더 이해 필요.....;ㅅ;**
+
+- 각 input 요소에 name 속성을 추가한 후, event.target.name 값을 기반으로 핸들러 함수를 고를 수 있다.
+
+```react
+class Reservation extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isGoing: true,
+            numberOfGuests: 2
+        };
+        
+        this.handleInputChange = this.handleInputChange.bind(this);
+    }
+    
+    handleInputChange(event) {
+        const target = event.target;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        // name = target의 name값을 잡아 핸들러 함수를 고를 수 있음 (?)
+        const name = target.name;
+        
+        // 주어진 input 이름에 해당하는 state키를 업데이트하기 위해 coumputed property name 구문을 사용함
+        // 계산 된 속성 이름도 지원합니다. 이를 통해 대괄호 [] 안에 식을 넣을 수 있으며, 속성 이름으로 계산되어 사용됩니다. 이것은 속성 접근 자 구문의 대괄호 표기법을 연상시킵니다.이 속성은 이미 속성을 읽고 설정하는 데 사용했을 수 있습니다.
+        this.setState({
+            [name]: value
+        });
+    }
+    
+    render() {
+        return (
+        <form>
+        	<label>
+            	Is going:
+                <input
+                    name="isGoing"
+                    type="checkbox"
+                    // this.state.name을 기반으로 핸들러 함수를 고른다 -> 위에 target.type === checkbox 이면 target.checked를 넘긴다.
+                    checked={this.state.isGoing}
+                    onchange={this.handleInputChange} />
+            </label>
+            <br/>
+            <label>
+            	Number of guests:
+                <input 
+                    name="numberOfGuests"
+                    type="number"
+                    value={this.state.numberOfGuests}
+                    onChange={this.handleInputChange} />
+            </label>
+        </form>
+        );
+    }
+}
+```
 
 
 
+## 11. State 끌어올리기
+
+```react
+function BiolingVerdict(props) {
+    if (props.celsius >= 100) {
+        return <p>끓는다!</p>
+    }
+    return <p>아직 안끓어요</p>
+}
+```
 
 
 
