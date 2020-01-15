@@ -19,6 +19,10 @@ class App extends Component {
   // handleToggle, handleChange, handleCreate, handleKeyPress 메소드 구현
   // form에서 하는 역할 : 텍스트 내용이 바뀌면 state업데이트 / 버튼 클릭 시, todo생성 후 todos 업데이트 / Enter버튼 누를 때도 똑같은 작업
   // Toggle : 클릭하면 체크표시와 함께 취소선 생김
+  
+  // ... : 전개연산자  ( 배열을 업데이트할 때, 배열의 값을 직접 수정하면 안됨)
+  // ... : 기존의 객체안에 있는 내용을 해당 위치에다가 풀어준다는 의미죠. 
+  // 그 다음에, 우리가 설정하고 싶은 값을 또 넣어주면 해당 값을 덮어쓰게 됩니다.
   handleToggle = (id) => {
     const { todos } = this.state;
 
