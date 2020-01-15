@@ -11,7 +11,7 @@ class TodoItemList extends Component {
         // onToggle : 체크박스를 키고 끄는 함수
         // onRemove : 삭제 함수
 
-        // todos를 객체배열 -> 컴포넌트 배열로 변환시켜주기 (map함수 사용)
+        // todos를 객체배열(하나하나 내가 입력했었음) -> 컴포넌트 배열(todos의 항목을 저절로 mapping시킨다)로 변환시켜주기 (map함수 사용)
         // 배열 랜더링 시, key값 필수! (default로 index가 key값으로 랜더링되는데, 이는 비추!)
         const todoList = todos.map(
             ({id, text, checked}) => (
