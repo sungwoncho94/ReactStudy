@@ -16,8 +16,29 @@ class App extends Component {
     ]
   }
 
-  // handleChange, handleCreate, handleKeyPress 메소드 구현
+  // handleToggle, handleChange, handleCreate, handleKeyPress 메소드 구현
   // form에서 하는 역할 : 텍스트 내용이 바뀌면 state업데이트 / 버튼 클릭 시, todo생성 후 todos 업데이트 / Enter버튼 누를 때도 똑같은 작업
+  // Toggle : 클릭하면 체크표시와 함께 취소선 생김
+  handleToggle = (id) => {
+    const { todos } = this.state;
+
+    // 파라미터로 받은 id를 가지고 지워야 할 아이템 index를 찾는다
+    const index = todos.findIndex(todo => todo.id === id);
+    const selected = todos[index];
+
+    const nextTodos = [...todos];  // 배열 복사
+
+    // 기존의 값들을 복사하고, checked값을 덮어쓰기
+    nextTodos[index] = {
+      ...selected,
+      checked: !selected.checked
+    };
+    
+    this.setState({
+      todos: nextTodos
+    });
+  }
+
   handleChange = (e) => {
     this.setState({
       // state를 바꿀건데, input값을 현재 target의 value로 바꾼다
@@ -49,6 +70,7 @@ class App extends Component {
     const { input, todos } = this.state;
     // 비구조화 할당 : 밑에서 value={this.input}이라고 안하려고 미리 불러옴
     const {
+      handleToggle,
       handleChange,
       handleCreate,
       handleKeyPress
@@ -59,7 +81,7 @@ class App extends Component {
       // form에는 Form.js자체를 받아서 보내고 / 왜 children은 TodoListTemplate안에 내용만 쓰면 저절로 들어갈까??
       <TodoListTemplate form={(
         <Form
-          value={ input}
+          value={input}
           onKeyPress={handleKeyPress}
           onChange={handleChange}
           onCreate={handleCreate}
@@ -68,7 +90,7 @@ class App extends Component {
 
         {/* todos를 화면에 보여주기 위해선, todos배열을 컴포넌트 배열로 변환해야함 -> map함수 사용 */}
         {/* 1. TodoItemList에 todos 전달하기 */}
-        <TodoItemList todos={todos}></TodoItemList>
+        <TodoItemList todos={todos} onToggle={handleToggle}></TodoItemList>
       </TodoListTemplate>
     );
   }
