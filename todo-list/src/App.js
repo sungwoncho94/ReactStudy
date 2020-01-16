@@ -4,7 +4,7 @@ import Form from './components/Form';
 import TodoItemList from './components/TodoItemList';
 
 class App extends Component {
-  // 초기 state설정
+  // 초기 state설정 
   id = 3
 
   state = {
